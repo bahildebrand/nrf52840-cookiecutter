@@ -1,0 +1,1 @@
+CMSIS_INC := -Iexternal/CMSIS_5/CMSIS/Core/Include

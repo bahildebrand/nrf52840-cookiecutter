@@ -27,7 +27,10 @@ debug: nrf52840-starter-debug
 $(BUILD_DIR):
 	@mkdir -p $(BUILD_DIR)
 
-INCLUDES += -Iinclude
+include mk/nrfx.mk
+include mk/cmsis.mk
+
+INCLUDES += -Iinclude $(NRFX_INC) $(CMSIS_INC)
 
 LDFLAGS += -Map=$(BUILD_DIR)/output.map \
 		   --gc-sections \
@@ -42,7 +45,7 @@ CFLAGS += -nostdlib \
 		  -Wall \
 		  -Werror
 
-SRC := $(wildcard $(SRC_DIR)/*)
+SRC := $(wildcard $(SRC_DIR)/*) $(NRFX_SRCS)
 OBJS := $(patsubst %.c, $(BUILD_DIR)/%.o, $(SRC))
 
 $(BUILD_DIR)/%.bin: $(BUILD_DIR)/%.elf
