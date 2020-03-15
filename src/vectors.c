@@ -6,6 +6,7 @@
 
 #include <stdint.h>
 #include <startup.h>
+#include <board_init.h>
 
 extern uint32_t _stack_end;
 
@@ -58,6 +59,7 @@ struct vector_table vec_table = {
 static void reset_handler(void)
 {
         init_mem();
+        board_init();
 
         main();
 }
