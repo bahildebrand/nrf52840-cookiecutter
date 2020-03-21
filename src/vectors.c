@@ -9,6 +9,7 @@
 #include <board_init.h>
 
 #include <nrfx_clock.h>
+#include <nrfx_gpiote.h>
 
 extern uint32_t _stack_end;
 
@@ -76,6 +77,8 @@ struct vector_table {
         irq_func timer4;
         irq_func pwm0;
         irq_func pdm;
+        irq_func reserved3;
+        irq_func reserved4;
         irq_func mwu;
         irq_func pwm1;
         irq_func pwm2;
@@ -87,7 +90,10 @@ struct vector_table {
         irq_func uarte1;
         irq_func qspi;
         irq_func cryptocell;
+        irq_func reserved5;
+        irq_func reserved6;
         irq_func pwm3;
+        irq_func reserved7;
         irq_func spim3;
 };
 
@@ -108,6 +114,7 @@ struct vector_table vec_table = {
         .systick = (void*) systick_handler,
         /* IRQs */
         .power_clock = nrfx_clock_irq_handler,
+        .gpiote = nrfx_gpiote_irq_handler,
 };
 
 static void reset_handler(void)
