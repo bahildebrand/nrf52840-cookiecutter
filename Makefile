@@ -32,18 +32,20 @@ include mk/cmsis.mk
 
 INCLUDES += -Iinclude $(NRFX_INC) $(CMSIS_INC)
 
-LDFLAGS += -Map=$(BUILD_DIR)/output.map \
-		   --gc-sections \
+LDFLAGS += -Wl,-Map=$(BUILD_DIR)/output.map \
+		   -Wl,--gc-sections \
+		   -Wl,--print-memory-usage \
 		   -T link/link.ld
 
-CFLAGS += -nostdlib \
-		  -mcpu=cortex-m4 \
-		  -ffunction-sections \
-		  -fdata-sections \
-		  $(INCLUDES) \
-		  -g \
-		  -Wall \
-		  -Werror
+CFLAGS += -mcpu=cortex-m4 \
+	  -mthumb \
+	  -ffunction-sections \
+	  -fdata-sections \
+	  -ffreestanding \
+	  $(INCLUDES) \
+	  -g \
+	  -Wall \
+	  -Werror
 
 SRC := $(wildcard $(SRC_DIR)/*) $(NRFX_SRCS)
 OBJS := $(patsubst %.c, $(BUILD_DIR)/%.o, $(SRC))
@@ -56,7 +58,7 @@ $(BUILD_DIR)/%.o: %.c
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 $(BUILD_DIR)/%.elf: $(OBJS)
-	$(LD) -o $@ $^ $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 $(BUILD_DIR)/%.dump.txt: $(BUILD_DIR)/%.elf
 	$(OBJDMP) -D $^ > $@
