@@ -29,15 +29,18 @@ $(BUILD_DIR):
 
 include mk/nrfx.mk
 include mk/cmsis.mk
+include mk/freertos.mk
 
-INCLUDES += -Iinclude $(NRFX_INC) $(CMSIS_INC)
+INCLUDES += -Iinclude $(NRFX_INC) $(CMSIS_INC) $(FREERTOS_INCS)
 
 LDFLAGS += -Wl,-Map=$(BUILD_DIR)/output.map \
-		   -Wl,--gc-sections \
-		   -Wl,--print-memory-usage \
-		   -T link/link.ld
+	   -Wl,--gc-sections \
+	   -Wl,--print-memory-usage \
+	   -T link/link.ld
 
 CFLAGS += -mcpu=cortex-m4 \
+	  -mfloat-abi=hard \
+	  -mfpu=fpv4-sp-d16 \
 	  -mthumb \
 	  -ffunction-sections \
 	  -fdata-sections \
@@ -47,7 +50,7 @@ CFLAGS += -mcpu=cortex-m4 \
 	  -Wall \
 	  -Werror
 
-SRC := $(wildcard $(SRC_DIR)/*) $(NRFX_SRCS)
+SRC := $(wildcard $(SRC_DIR)/*) $(NRFX_SRCS) $(FREERTOS_SRCS)
 OBJS := $(patsubst %.c, $(BUILD_DIR)/%.o, $(SRC))
 
 $(BUILD_DIR)/%.bin: $(BUILD_DIR)/%.elf

@@ -11,9 +11,15 @@
 #include <nrfx_clock.h>
 #include <nrfx_gpiote.h>
 
+#include <FreeRTOSConfig.h>
+
 extern uint32_t _stack_end;
 
 int main(void);
+void xPortSysTickHandler( void );
+void vPortSVCHandler( void ) __attribute__ (( naked ));
+void xPortPendSVHandler( void ) __attribute__ (( naked ));
+
 
 static void reset_handler(void);
 static void nmi_handler(void);
@@ -97,6 +103,10 @@ struct vector_table {
         irq_func spim3;
 };
 
+static void dummy_interrupt(void)
+{
+        while(1){;}
+}
 
 /* Tells the linker to place vec_table in the .vecs section. This allows us to
  * place this section at the start of our memory map in the linker script. */
@@ -115,6 +125,48 @@ struct vector_table vec_table = {
         /* IRQs */
         .power_clock = nrfx_clock_irq_handler,
         .gpiote = nrfx_gpiote_irq_handler,
+        .fpu = dummy_interrupt,
+        .radio = dummy_interrupt,
+        .uarte0_uart0 = dummy_interrupt,
+        .spim0_spis0_twim0_twis0_spi0_twi0 = dummy_interrupt,
+        .spim1_spis1_twim1_twis1_spi1_twi1 = dummy_interrupt,
+        .nfct = dummy_interrupt,
+        .saadc = dummy_interrupt,
+        .timer0 = dummy_interrupt,
+        .time1 = dummy_interrupt,
+        .timer2 = dummy_interrupt,
+        .rtc0 = dummy_interrupt,
+        .temp = dummy_interrupt,
+        .rng = dummy_interrupt,
+        .ecb = dummy_interrupt,
+        .ccm_aar = dummy_interrupt,
+        .wdt = dummy_interrupt,
+        .rtc1 = dummy_interrupt,
+        .qdec = dummy_interrupt,
+        .comp_lpcomp = dummy_interrupt,
+        .swi0_egu0 = dummy_interrupt,
+        .swi1_egu1 = dummy_interrupt,
+        .swi2_egu2 = dummy_interrupt,
+        .swi3_egu3 = dummy_interrupt,
+        .swi4_egu4 = dummy_interrupt,
+        .swi5_egu5 = dummy_interrupt,
+        .timer3 = dummy_interrupt,
+        .timer4 = dummy_interrupt,
+        .pwm0 = dummy_interrupt,
+        .pdm = dummy_interrupt,
+        .mwu = dummy_interrupt,
+        .pwm1 = dummy_interrupt,
+        .pwm2 = dummy_interrupt,
+        .spim2_spis2_spi2 = dummy_interrupt,
+        .rtc2 = dummy_interrupt,
+        .i2s = dummy_interrupt,
+        .fpu = dummy_interrupt,
+        .usbd = dummy_interrupt,
+        .uarte1 = dummy_interrupt,
+        .qspi = dummy_interrupt,
+        .cryptocell = dummy_interrupt,
+        .pwm3 = dummy_interrupt,
+        .spim3 = dummy_interrupt,
 };
 
 static void reset_handler(void)
@@ -152,15 +204,15 @@ static void usage_fault_handler(void)
 
 static void sv_call_handler(void)
 {
-
+        vPortSVCHandler();
 }
 
 static void pend_sv_handler(void)
 {
-
+        xPortPendSVHandler();
 }
 
 static void systick_handler(void)
 {
-
+        xPortSysTickHandler();
 }

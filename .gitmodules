@@ -4,3 +4,6 @@
 [submodule "external/nrfx"]
 	path = external/nrfx
 	url = https://github.com/NordicSemiconductor/nrfx.git
+[submodule "external/amazon-freertos"]
+	path = external/amazon-freertos
+	url = https://github.com/aws/amazon-freertos.git

@@ -8,10 +8,18 @@
 
 #include <nrfx_gpiote.h>
 
+#include "FreeRTOS.h" /* Must come first. */
+#include "task.h"     /* RTOS task related API prototypes. */
+
 #define LED_PIN 14
 #define LOOP_MAX 10000u
 
-static void toggle_led(void);
+#define LED_TASK_STACK_SZ (configMINIMAL_STACK_SIZE * 2)
+
+static void green_led_task(void *args);
+
+StackType_t green_led_stack[LED_TASK_STACK_SZ];
+StaticTask_t green_led_task_buffer;
 
 int main(void)
 {
@@ -20,19 +28,26 @@ int main(void)
         nrfx_gpiote_out_task_enable(LED_PIN);
         nrfx_gpiote_out_init(LED_PIN, &ledcfg);
 
-        while(1) {
-                toggle_led();
-        }
+        xTaskCreateStatic(
+                green_led_task,
+                "LED",
+                LED_TASK_STACK_SZ,
+                NULL,
+                4,
+                green_led_stack,
+                &green_led_task_buffer);
+
+        vTaskStartScheduler();
 
         return 0;
 }
 
-static void toggle_led(void)
+static void green_led_task(void *args)
 {
-        uint32_t idx = 0u;
+        const TickType_t delay_ticks = 500 / portTICK_PERIOD_MS;
 
-        nrfx_gpiote_out_toggle(LED_PIN);
-        for(idx = 0; idx < 1000000; idx++) {;}
-        nrfx_gpiote_out_toggle(LED_PIN);
-        for(idx = 0; idx < 1000000; idx++) {;}
+        while(1) {
+                nrfx_gpiote_out_toggle(LED_PIN);
+                vTaskDelay(delay_ticks);
+        }
 }

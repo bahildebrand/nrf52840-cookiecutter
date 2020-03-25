@@ -1,0 +1,12 @@
+FREERTOS_SRC_DIR := external/amazon-freertos
+KERNEL_SRC_DIR := $(FREERTOS_SRC_DIR)/freertos_kernel
+PORTABLE_SRC_DIR := $(KERNEL_SRC_DIR)/portable/GCC/ARM_CM4F
+
+PORTABLE_SRCS := $(PORTABLE_SRC_DIR)/port.c
+KERNEL_SRCS := $(wildcard $(KERNEL_SRC_DIR)/*.c)
+
+
+FREERTOS_SRCS := $(KERNEL_SRCS) \
+		 $(PORTABLE_SRCS) \
+		 $(KERNEL_SRC_DIR)/portable/MemMang/heap_1.c
+FREERTOS_INCS := -I$(KERNEL_SRC_DIR)/include -I$(PORTABLE_SRC_DIR)
