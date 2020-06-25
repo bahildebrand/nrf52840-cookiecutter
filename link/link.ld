@@ -1,8 +1,10 @@
 /* Include the linker script containing our memory regions. */
 INCLUDE "link/mem.ld"
 
+ENTRY(Reset_Handler)
+
 /* Size of the initial stack to be loaded in bytes */
-STACK_SIZE = 0x1000;
+STACK_SIZE = 8192;
 
 SECTIONS
 {

@@ -21,7 +21,7 @@ void vPortSVCHandler( void ) __attribute__ (( naked ));
 void xPortPendSVHandler( void ) __attribute__ (( naked ));
 
 
-static void reset_handler(void);
+void Reset_Handler(void);
 static void nmi_handler(void);
 static void hardfault_handler(void);
 static void mem_management_fault_handler(void);
@@ -113,7 +113,7 @@ static void dummy_interrupt(void)
 __attribute__ ((section(".vecs")))
 struct vector_table vec_table = {
         .stack_val = (void*) &_stack_end,
-        .reset = (void*) reset_handler,
+        .reset = (void*) Reset_Handler,
         .nmi = (void*) nmi_handler,
         .hard_fault = (void*) hardfault_handler,
         .mem_management_fault = (void*) mem_management_fault_handler,
@@ -169,7 +169,7 @@ struct vector_table vec_table = {
         .spim3 = dummy_interrupt,
 };
 
-static void reset_handler(void)
+void Reset_Handler(void)
 {
         init_mem();
         board_init();
